@@ -1,6 +1,6 @@
 # Math Solver Chrome Extension
 
-<img width="300" alt="Screenshot 2024-11-03 at 10 13 34 AM" src="https://github.com/user-attachments/assets/e6841961-cbd8-4276-8630-b897ce32f9db">
+<img width="500" alt="Screenshot 2024-11-03 at 10 13 34 AM" src="https://github.com/user-attachments/assets/e6841961-cbd8-4276-8630-b897ce32f9db">
 <img width="300" alt="Screenshot 2024-11-03 at 10 15 02 AM" src="https://github.com/user-attachments/assets/8107da50-7f67-4724-ae77-13ec136839a5">
 
 
