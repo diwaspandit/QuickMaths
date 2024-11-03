@@ -48,3 +48,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Gemini API](https://ai.google.dev/gemini-api): For providing AI-powered responses.
 - [Desmos API](https://www.desmos.com/api/v1.9/docs/index.html): For offering graphing capabilities.
 - [Cropper.js](https://fengyuanchen.github.io/cropperjs/): For image cropping functionalities.
+/
