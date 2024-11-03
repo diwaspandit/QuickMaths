@@ -1,110 +1,120 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { sendToGemini } from './api.js';
-import 'cropperjs/dist/cropper.css';
+import React, { useRef, useState, useEffect } from 'react';
 import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
+
+// Import your API function
+import { sendToGemini } from './api.js';
 
 const MathSolverPopup = () => {
     const [inputText, setInputText] = useState('');
     const [chatMessages, setChatMessages] = useState([]);
-    const [cropper, setCropper] = useState(null);
     const cropperImageRef = useRef(null);
+    const [cropper, setCropper] = useState(null);
     const [imageSrc, setImageSrc] = useState('');
-    const [selectionActive, setSelectionActive] = useState(false);
-    const [selectionBoxStyle, setSelectionBoxStyle] = useState({});
-    const [startCoords, setStartCoords] = useState({ x: 0, y: 0 });
+    const [showDesmos, setShowDesmos] = useState(false); // State to control Desmos visibility
 
+    // Add messages to chat
     const addMessageToChat = (message) => {
-        setChatMessages(prevMessages => [...prevMessages, message]);
+        setChatMessages((prevMessages) => [...prevMessages, message]);
     };
 
+    // Send input to the API
     const handleSend = async () => {
         let response;
-        if (inputText) {
-            addMessageToChat("You: " + inputText);
-            if (imageSrc) {
-                response = await sendToGemini(imageSrc); // Send cropped image
-            } else {
-                response = await sendToGemini(inputText); // Send text only
-            }
-            addMessageToChat("Gemini: " + response);
-            setInputText('');
-        }
+        addMessageToChat("You: " + inputText);
+
+        const formattedPrompt = `Please give the answer in proper output format. The output should be in new line. Provide the answer in a detailed format. Answer should be short and convincing: ${inputText}`;
+        response = await sendToGemini(formattedPrompt, imageSrc);
+
+        addMessageToChat("Guru: " + response);
+        setInputText('');
     };
 
-    const handleCapture = () => {
-        initiateScreenCapture();
-    };
-
-    const initiateScreenCapture = () => {
-        setSelectionActive(true);
-        captureScreen();
-    };
-
-    const captureScreen = async () => {
+    // Capture the screen and set as image source
+    const handleCapture = async () => {
         try {
             const screenshot = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
-            setImageSrc(screenshot); // Set the image source for Cropper
+            setImageSrc(screenshot);
         } catch (error) {
             console.error('Error capturing screen:', error);
             addMessageToChat('Error capturing the screen. Please try again.');
         }
     };
 
+    // Download cropped image and send to API
+    const downloadCroppedImage = () => {
+        if (cropper) {
+            cropper.getCroppedCanvas().toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+
+                // Trigger download
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'cropped-image.png';
+                a.click();
+
+                // Convert to base64 and send to API
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64Image = reader.result.split(',')[1];
+                    sendToGemini(inputText, base64Image);
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/png');
+        }
+    };
+
+    // Initialize Cropper when imageSrc changes
     useEffect(() => {
         if (cropperImageRef.current && imageSrc) {
+            // Destroy previous Cropper instance if exists
+            if (cropper) cropper.destroy();
+
+            // Create a new Cropper instance
             const newCropper = new Cropper(cropperImageRef.current, {
-                aspectRatio: 16 / 9,
+                aspectRatio: 16 / 9, // You can adjust the aspect ratio as needed
                 viewMode: 1,
                 autoCropArea: 1,
             });
             setCropper(newCropper);
         }
+
+        // Cleanup Cropper on unmount
         return () => {
-            if (cropper) {
-                cropper.destroy();
-            }
+            if (cropper) cropper.destroy();
         };
     }, [imageSrc]);
 
-    const finishSelection = () => {
-        setSelectionActive(false);
-        getCroppedImage();
-    };
-
-    const getCroppedImage = () => {
+    // Remove image and Cropper instance
+    const removeImage = () => {
+        setImageSrc('');
         if (cropper) {
-            const canvas = cropper.getCroppedCanvas();
-            canvas.toBlob(blob => {
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    const base64Image = reader.result.split(',')[1];
-                    setImageSrc(base64Image); // Set the base64 image
-                    addMessageToChat("Image ready for processing.");
-                };
-                reader.readAsDataURL(blob);
-            });
+            cropper.destroy();
+            setCropper(null);
         }
     };
 
-    const startSelection = (event) => {
-        setStartCoords({ x: event.clientX, y: event.clientY });
+    // Toggle Desmos calculator visibility
+    const toggleDesmos = () => {
+        setShowDesmos(!showDesmos);
     };
 
-    const updateSelection = (event) => {
-        const width = event.clientX - startCoords.x;
-        const height = event.clientY - startCoords.y;
-
-        setSelectionBoxStyle({
-            display: 'block',
-            left: `${Math.min(startCoords.x, event.clientX)}px`,
-            top: `${Math.min(startCoords.y, event.clientY)}px`,
-            width: `${Math.abs(width)}px`,
-            height: `${Math.abs(height)}px`,
-        });
-    };
+    // Load Desmos API script
+    useEffect(() => {
+        if (showDesmos) {
+            const script = document.createElement('script');
+            script.src = 'https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6';
+            script.onload = () => {
+                const elt = document.getElementById('calculator');
+                window.Desmos = window.Desmos || {};
+                window.Desmos.GraphingCalculator(elt);
+            };
+            document.body.appendChild(script);
+        }
+    }, [showDesmos]);
 
     return (
-        <div style={{ width: '320px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f9f9f9', color: '#333' }}>
+        <div style={{ width: '320px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f9f9f9', color: '#333', position: 'relative' }}>
             <h1 style={{ fontSize: '24px', textAlign: 'center', color: '#4CAF50' }}>Math Solver</h1>
             <div id="chatContainer" style={{ height: '300px', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '5px', padding: '10px', backgroundColor: '#fff', marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
                 {chatMessages.map((msg, index) => (
@@ -122,40 +132,25 @@ const MathSolverPopup = () => {
                 />
                 <button onClick={handleSend} style={buttonStyle}>Send</button>
                 <button onClick={handleCapture} style={buttonStyle}>Capture</button>
+                <button onClick={toggleDesmos} style={buttonStyle}>Desmos</button>
             </div>
             {imageSrc && (
                 <div id="cropperContainer" style={{ display: 'block', position: 'relative', marginTop: '10px' }}>
-                    <img ref={cropperImageRef} src={imageSrc} alt="" style={{ maxWidth: '100%' }} />
-                    {selectionActive && (
-                        <div
-                            onMouseDown={startSelection}
-                            onMouseMove={updateSelection}
-                            onMouseUp={finishSelection}
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                zIndex: 10
-                            }}
-                        >
-                            <div style={{
-                                ...selectionBoxStyle,
-                                position: 'absolute',
-                                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                                border: '2px dashed #4CAF50',
-                                pointerEvents: 'none'
-                            }} />
-                        </div>
-                    )}
+                    <img ref={cropperImageRef} src={imageSrc} alt="Crop Area" style={{ maxWidth: '100%' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                        <button onClick={downloadCroppedImage} style={buttonStyle}>Download Image</button>
+                        <button onClick={removeImage} style={buttonStyle}>Remove Image</button>
+                    </div>
                 </div>
+            )}
+            {showDesmos && (
+                <div id="calculator" style={{ width: '100%', height: '80%', position: 'absolute', top: '0', left: '0', backgroundColor: 'white', zIndex: '1000', border: '1px solid #ccc' }}></div>
             )}
         </div>
     );
 };
 
-// Define button styles
+// Button styling
 const buttonStyle = {
     padding: '10px 15px',
     border: 'none',
