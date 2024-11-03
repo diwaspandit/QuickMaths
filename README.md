@@ -41,9 +41,6 @@ The Math Solver Chrome Extension is designed to enhance the educational experien
 - **User Feedback Mechanism**: Implement a feedback system to improve responses based on user input.
 - **Mobile Support**: Adapt the extension for use on mobile browsers for broader accessibility.
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Acknowledgments
 - [Gemini API](https://ai.google.dev/gemini-api): For providing AI-powered responses.
 - [Desmos API](https://www.desmos.com/api/v1.9/docs/index.html): For offering graphing capabilities.
