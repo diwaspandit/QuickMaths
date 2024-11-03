@@ -1,5 +1,7 @@
 # Math Solver Chrome Extension
 
+<img width="791" alt="Screenshot 2024-11-03 at 10 13 16 AM" src="https://github.com/user-attachments/assets/0e0c89f9-4f97-447e-91e5-b70d8a542ac9">
+
 ## Overview
 The Math Solver Chrome Extension is a powerful tool designed to help users solve mathematical problems quickly and efficiently. Utilizing advanced AI capabilities, this extension allows users to interactively ask math questions, capture relevant screen content, and visualize equations using the Desmos graphing calculator.
 
@@ -45,4 +47,5 @@ The Math Solver Chrome Extension is designed to enhance the educational experien
 - [Gemini API](https://ai.google.dev/gemini-api): For providing AI-powered responses.
 - [Desmos API](https://www.desmos.com/api/v1.9/docs/index.html): For offering graphing capabilities.
 - [Cropper.js](https://fengyuanchen.github.io/cropperjs/): For image cropping functionalities.
-/
+
+
