@@ -27,10 +27,11 @@ The primary purpose of the Math Solver extension is to provide users with a conv
 
 ## Installation
 1. Download or clone this repository to your local machine.
-2. Open Chrome and navigate to `chrome://extensions/`.
-3. Enable "Developer mode" at the top right corner.
-4. Click "Load unpacked" and select the directory of your cloned project.
-5. The Math Solver extension will now be available in your Chrome browser.
+2. Run the command "npm run build".
+3. Open Chrome and navigate to `chrome://extensions/`.
+4. Enable "Developer mode" at the top right corner.
+5. Click "Load unpacked" and select the directory of your cloned project(build directory).
+6. The Math Solver extension will now be available in your Chrome browser.
 
 ## Impact
 The Math Solver Chrome Extension is designed to enhance the educational experience by making math problem-solving accessible and engaging. By combining AI and graphing tools, it empowers students, educators, and anyone interested in mathematics to improve their problem-solving skills and deepen their understanding of mathematical concepts.
