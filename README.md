@@ -1,6 +1,7 @@
 # Math Solver Chrome Extension
 
-<img width="791" alt="Screenshot 2024-11-03 at 10 13 16 AM" src="https://github.com/user-attachments/assets/0e0c89f9-4f97-447e-91e5-b70d8a542ac9">
+<img width="665" alt="Screenshot 2024-11-03 at 10 13 34 AM" src="https://github.com/user-attachments/assets/e6841961-cbd8-4276-8630-b897ce32f9db">
+
 
 ## Overview
 The Math Solver Chrome Extension is a powerful tool designed to help users solve mathematical problems quickly and efficiently. Utilizing advanced AI capabilities, this extension allows users to interactively ask math questions, capture relevant screen content, and visualize equations using the Desmos graphing calculator.
