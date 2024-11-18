@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize GoogleGenerativeAI with your API key
-const genAI = new GoogleGenerativeAI("AIzaSyB7Fwv3wopUfQ3cNAIemHYkknuxQNbz0SE");
+const genAI = new GoogleGenerativeAI("");
 
 /**
  * Sends text and/or image to the Gemini API and returns the response as text.
